@@ -31,11 +31,12 @@ body{
   overflow-x:hidden;
 }
 
+/* ❄️ FIX TOUCH SAFARI */
 canvas{
   position:fixed;
   inset:0;
   pointer-events:none;
-  z-index:0;
+  z-index:-1;
 }
 
 .container{
@@ -144,13 +145,11 @@ button.alt{background:var(--accent2)}
 
 button:hover{
   transform:translateY(-3px) scale(1.05);
-  box-shadow:0 14px 26px rgba(0,0,0,.15);
 }
 
 button:disabled{
   opacity:.6;
   cursor:not-allowed;
-  transform:none;
 }
 
 .confirm{
@@ -171,7 +170,6 @@ button:disabled{
   font-size:.85rem;
   box-shadow:0 8px 18px rgba(0,0,0,.12);
   cursor:pointer;
-  user-select:none;
 }
 
 @keyframes fadeUp{
@@ -180,7 +178,6 @@ button:disabled{
 }
 
 @keyframes shake{
-  0%,100%{transform:none}
   25%{transform:translateX(-4px)}
   50%{transform:translateX(4px)}
   75%{transform:translateX(-2px)}
@@ -188,6 +185,7 @@ button:disabled{
 .shake{animation:shake .4s ease}
 </style>
 </head>
+
 <body>
 
 <canvas id="snow"></canvas>
@@ -234,7 +232,8 @@ button:disabled{
 <script>
 /* Typing */
 const text="This Christmas Eve, I’d love to spend a quiet, cozy evening with you — warm lights, gentle smiles, and hearts softly glowing ✨";
-let i=0, typingEl=document.getElementById("typing");
+let i=0;
+const typingEl=document.getElementById("typing");
 (function type(){
   if(i<text.length){
     typingEl.innerHTML+=text.charAt(i++);
@@ -242,26 +241,34 @@ let i=0, typingEl=document.getElementById("typing");
   }
 })();
 
-/* Countdown — GIỮ NGUYÊN THỜI GIAN CŨ */
-const target = new Date("December 24, 2025 18:30:00").getTime();
+/* 🎄 COUNTDOWN – SAFARI SAFE */
+const dEl=document.getElementById("d");
+const hEl=document.getElementById("h");
+const mEl=document.getElementById("m");
+const sEl=document.getElementById("s");
 
-setInterval(()=>{
-  const now = new Date().getTime();
-  const diff = target - now;
+/* December 24, 2025 – 18:30 VN */
+const target=new Date(2025,11,24,18,30,0).getTime();
 
-  if(diff <= 0){
-    document.getElementById("countdown").innerHTML =
-      "<strong>🎄 It’s Christmas Time! 🎄</strong>";
+function updateCountdown(){
+  const diff=target-Date.now();
+  if(diff<=0){
+    document.getElementById("countdown").innerHTML="<strong>🎄 It’s Christmas Time! 🎄</strong>";
     return;
   }
+  dEl.textContent=Math.floor(diff/86400000);
+  hEl.textContent=Math.floor(diff/3600000)%24;
+  mEl.textContent=Math.floor(diff/60000)%60;
+  sEl.textContent=Math.floor(diff/1000)%60;
+}
 
-  d.textContent = Math.floor(diff / (1000*60*60*24));
-  h.textContent = Math.floor((diff / (1000*60*60)) % 24);
-  m.textContent = Math.floor((diff / (1000*60)) % 60);
-  s.textContent = Math.floor((diff / 1000) % 60);
-},1000);
+updateCountdown();
+(function tick(){
+  updateCountdown();
+  setTimeout(tick,1000);
+})();
 
-/* Music */
+/* 🎵 MUSIC */
 const music=document.getElementById("music");
 let playing=false;
 function toggleMusic(el){
@@ -271,12 +278,11 @@ function toggleMusic(el){
   el.textContent=playing?"🔊 Music":"🔇 Music";
 }
 
-/* Accept */
+/* ❤️ ACCEPT */
 function accept(){
   document.querySelector(".card").classList.add("shake");
   document.getElementById("confirm").style.display="block";
   document.querySelectorAll("button").forEach(b=>b.disabled=true);
-
   if(!playing){
     music.muted=false;
     music.play();
@@ -286,7 +292,7 @@ function accept(){
   burst();
 }
 
-/* ❄️ Romantic Snow */
+/* ❄️ SNOW + HEARTS */
 const canvas=document.getElementById("snow");
 const ctx=canvas.getContext("2d");
 let w,h,particles=[];
@@ -294,16 +300,11 @@ function resize(){w=canvas.width=innerWidth;h=canvas.height=innerHeight}
 addEventListener("resize",resize);resize();
 
 class Particle{
-  constructor(type="snow"){
-    this.type=type;
-    this.reset();
-  }
+  constructor(type="snow"){this.type=type;this.reset()}
   reset(){
     this.x=Math.random()*w;
     this.y=Math.random()*-h;
-    this.size=this.type==="snow"
-      ? Math.random()*2.5+1.2
-      : Math.random()*3+2;
+    this.size=this.type==="snow"?Math.random()*2.5+1:Math.random()*3+2;
     this.speed=Math.random()*0.6+0.4;
     this.swing=Math.random()*Math.PI*2;
     this.opacity=Math.random()*0.5+0.5;
@@ -318,11 +319,8 @@ class Particle{
     ctx.save();
     ctx.globalAlpha=this.opacity;
     ctx.translate(this.x,this.y);
-    ctx.shadowColor="rgba(255,255,255,.8)";
-    ctx.shadowBlur=8;
-
     if(this.type==="heart"){
-      ctx.fillStyle="rgba(243,166,184,.75)";
+      ctx.fillStyle="rgba(243,166,184,.8)";
       ctx.beginPath();
       ctx.moveTo(0,0);
       ctx.bezierCurveTo(-5,-5,-10,2,0,10);
@@ -338,8 +336,8 @@ class Particle{
   }
 }
 
-for(let i=0;i<140;i++) particles.push(new Particle("snow"));
-for(let i=0;i<25;i++) particles.push(new Particle("heart"));
+for(let i=0;i<140;i++)particles.push(new Particle("snow"));
+for(let i=0;i<25;i++)particles.push(new Particle("heart"));
 
 (function animate(){
   ctx.clearRect(0,0,w,h);
@@ -350,11 +348,11 @@ for(let i=0;i<25;i++) particles.push(new Particle("heart"));
 function burst(){
   for(let i=0;i<15;i++){
     const p=new Particle("heart");
-    p.x=w/2; p.y=h/2;
-    p.speed=Math.random()*2+1;
+    p.x=w/2;p.y=h/2;p.speed=Math.random()*2+1;
     particles.push(p);
   }
 }
 </script>
+
 </body>
 </html>
