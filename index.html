@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>🎄 A Special Christmas Invitation</title>
+
+<meta property="og:title" content="🎄 A Special Christmas Invitation"/>
+<meta property="og:description" content="A cozy Christmas Eve just for you ✨"/>
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500&family=Quicksand:wght@400;600&display=swap" rel="stylesheet">
+
+<style>
+:root{
+  --bg:#fff7f4;
+  --card:#ffffff;
+  --accent:#f3a6b8;
+  --accent2:#a7d7c5;
+  --text:#5a4b4b;
+  --soft:#f9e7ec;
+}
+
+*{box-sizing:border-box}
+
+body{
+  margin:0;
+  font-family:'Quicksand',sans-serif;
+  background:linear-gradient(180deg,var(--bg),#fff);
+  color:var(--text);
+  min-height:100vh;
+  overflow-x:hidden;
+}
+
+canvas{
+  position:fixed;
+  inset:0;
+  pointer-events:none;
+  z-index:0;
+}
+
+.container{
+  position:relative;
+  z-index:1;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  min-height:100vh;
+  padding:20px;
+}
+
+.card{
+  width:100%;
+  max-width:420px;
+  background:var(--card);
+  border-radius:28px;
+  padding:32px 26px 36px;
+  box-shadow:0 20px 40px rgba(0,0,0,.08);
+  text-align:center;
+  animation:fadeUp 1.2s ease forwards;
+}
+
+h1{
+  font-family:'Poppins',sans-serif;
+  font-weight:500;
+  margin:0 0 14px;
+}
+
+.typing{
+  min-height:90px;
+  font-size:.95rem;
+  line-height:1.6;
+  margin-bottom:18px;
+}
+
+.typing::after{
+  content:"|";
+  animation:blink 1s infinite;
+}
+
+@keyframes blink{
+  0%,50%,100%{opacity:1}
+  25%,75%{opacity:0}
+}
+
+.details{
+  background:var(--soft);
+  border-radius:18px;
+  padding:14px;
+  font-size:.9rem;
+  margin-bottom:18px;
+}
+
+.countdown{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:8px;
+  margin:18px 0;
+}
+
+.time-box{
+  background:#fff;
+  border-radius:14px;
+  padding:10px 6px;
+  box-shadow:0 8px 18px rgba(0,0,0,.06);
+}
+
+.num{
+  font-family:'Poppins',sans-serif;
+  font-size:1.2rem;
+  font-weight:500;
+  color:var(--accent);
+}
+
+.label{
+  font-size:.65rem;
+  opacity:.7;
+}
+
+.question{
+  margin:18px 0 14px;
+  font-weight:600;
+}
+
+.buttons{
+  display:flex;
+  gap:12px;
+  justify-content:center;
+}
+
+button{
+  border:none;
+  padding:10px 16px;
+  border-radius:999px;
+  font-family:'Poppins',sans-serif;
+  font-size:.85rem;
+  cursor:pointer;
+  transition:.25s ease;
+  background:var(--accent);
+  color:#fff;
+  box-shadow:0 8px 16px rgba(0,0,0,.12);
+}
+
+button.alt{background:var(--accent2)}
+
+button:hover{
+  transform:translateY(-3px) scale(1.05);
+  box-shadow:0 14px 26px rgba(0,0,0,.15);
+}
+
+button:disabled{
+  opacity:.6;
+  cursor:not-allowed;
+  transform:none;
+}
+
+.confirm{
+  margin-top:18px;
+  font-size:.9rem;
+  display:none;
+  animation:fadeUp .8s ease forwards;
+}
+
+.music{
+  position:fixed;
+  bottom:18px;
+  right:18px;
+  z-index:2;
+  background:#fff;
+  border-radius:999px;
+  padding:10px 12px;
+  font-size:.85rem;
+  box-shadow:0 8px 18px rgba(0,0,0,.12);
+  cursor:pointer;
+  user-select:none;
+}
+
+@keyframes fadeUp{
+  from{opacity:0;transform:translateY(16px)}
+  to{opacity:1;transform:none}
+}
+
+@keyframes shake{
+  0%,100%{transform:none}
+  25%{transform:translateX(-4px)}
+  50%{transform:translateX(4px)}
+  75%{transform:translateX(-2px)}
+}
+.shake{animation:shake .4s ease}
+</style>
+</head>
+<body>
+
+<canvas id="snow"></canvas>
+
+<div class="container">
+  <div class="card">
+    <h1>🎄 A Special Christmas Invitation 🎄</h1>
+    <div class="typing" id="typing"></div>
+
+    <div class="details">
+      📅 <strong>December 24, 2025</strong><br/>
+      ⏰ <strong>6:30 PM</strong><br/>
+      📍 <strong>ONGI JJAJANG</strong>
+    </div>
+
+    <small>Counting down to our Christmas night 🎅</small>
+
+    <div class="countdown" id="countdown">
+      <div class="time-box"><div class="num" id="d">0</div><div class="label">Days</div></div>
+      <div class="time-box"><div class="num" id="h">0</div><div class="label">Hours</div></div>
+      <div class="time-box"><div class="num" id="m">0</div><div class="label">Minutes</div></div>
+      <div class="time-box"><div class="num" id="s">0</div><div class="label">Seconds</div></div>
+    </div>
+
+    <div class="question">Would you like to spend Christmas with me? 💖</div>
+
+    <div class="buttons">
+      <button onclick="accept()">Yes, I’d love to 💕</button>
+      <button class="alt" onclick="accept()">Of course 🎁</button>
+    </div>
+
+    <div class="confirm" id="confirm">
+      ✨ I can’t wait to make this Christmas warm and magical together ✨
+    </div>
+  </div>
+</div>
+
+<audio id="music" loop muted>
+  <source src="music/christmas.mp3" type="audio/mpeg">
+</audio>
+
+<div class="music" onclick="toggleMusic(this)">🔇 Music</div>
+
+<script>
+/* Typing */
+const text="This Christmas Eve, I’d love to spend a quiet, cozy evening with you — warm lights, gentle smiles, and hearts softly glowing ✨";
+let i=0, typingEl=document.getElementById("typing");
+(function type(){
+  if(i<text.length){
+    typingEl.innerHTML+=text.charAt(i++);
+    setTimeout(type,35);
+  }
+})();
+
+/* Countdown — GIỮ NGUYÊN THỜI GIAN CŨ */
+const target = new Date("December 24, 2025 18:30:00").getTime();
+
+setInterval(()=>{
+  const now = new Date().getTime();
+  const diff = target - now;
+
+  if(diff <= 0){
+    document.getElementById("countdown").innerHTML =
+      "<strong>🎄 It’s Christmas Time! 🎄</strong>";
+    return;
+  }
+
+  d.textContent = Math.floor(diff / (1000*60*60*24));
+  h.textContent = Math.floor((diff / (1000*60*60)) % 24);
+  m.textContent = Math.floor((diff / (1000*60)) % 60);
+  s.textContent = Math.floor((diff / 1000) % 60);
+},1000);
+
+/* Music */
+const music=document.getElementById("music");
+let playing=false;
+function toggleMusic(el){
+  playing=!playing;
+  music.muted=!playing;
+  if(playing) music.play();
+  el.textContent=playing?"🔊 Music":"🔇 Music";
+}
+
+/* Accept */
+function accept(){
+  document.querySelector(".card").classList.add("shake");
+  document.getElementById("confirm").style.display="block";
+  document.querySelectorAll("button").forEach(b=>b.disabled=true);
+
+  if(!playing){
+    music.muted=false;
+    music.play();
+    playing=true;
+    document.querySelector(".music").textContent="🔊 Music";
+  }
+  burst();
+}
+
+/* ❄️ Romantic Snow */
+const canvas=document.getElementById("snow");
+const ctx=canvas.getContext("2d");
+let w,h,particles=[];
+function resize(){w=canvas.width=innerWidth;h=canvas.height=innerHeight}
+addEventListener("resize",resize);resize();
+
+class Particle{
+  constructor(type="snow"){
+    this.type=type;
+    this.reset();
+  }
+  reset(){
+    this.x=Math.random()*w;
+    this.y=Math.random()*-h;
+    this.size=this.type==="snow"
+      ? Math.random()*2.5+1.2
+      : Math.random()*3+2;
+    this.speed=Math.random()*0.6+0.4;
+    this.swing=Math.random()*Math.PI*2;
+    this.opacity=Math.random()*0.5+0.5;
+  }
+  update(){
+    this.y+=this.speed;
+    this.swing+=0.01;
+    this.x+=Math.sin(this.swing)*0.4;
+    if(this.y>h+10) this.reset();
+  }
+  draw(){
+    ctx.save();
+    ctx.globalAlpha=this.opacity;
+    ctx.translate(this.x,this.y);
+    ctx.shadowColor="rgba(255,255,255,.8)";
+    ctx.shadowBlur=8;
+
+    if(this.type==="heart"){
+      ctx.fillStyle="rgba(243,166,184,.75)";
+      ctx.beginPath();
+      ctx.moveTo(0,0);
+      ctx.bezierCurveTo(-5,-5,-10,2,0,10);
+      ctx.bezierCurveTo(10,2,5,-5,0,0);
+      ctx.fill();
+    }else{
+      ctx.fillStyle="#fff";
+      ctx.beginPath();
+      ctx.arc(0,0,this.size,0,Math.PI*2);
+      ctx.fill();
+    }
+    ctx.restore();
+  }
+}
+
+for(let i=0;i<140;i++) particles.push(new Particle("snow"));
+for(let i=0;i<25;i++) particles.push(new Particle("heart"));
+
+(function animate(){
+  ctx.clearRect(0,0,w,h);
+  particles.forEach(p=>{p.update();p.draw()});
+  requestAnimationFrame(animate);
+})();
+
+function burst(){
+  for(let i=0;i<15;i++){
+    const p=new Particle("heart");
+    p.x=w/2; p.y=h/2;
+    p.speed=Math.random()*2+1;
+    particles.push(p);
+  }
+}
+</script>
+</body>
+</html>
